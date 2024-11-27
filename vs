@@ -145,7 +145,7 @@ while getopts brfo: options; do
 	esac
 done
 
-if [[ $(whoami) != "root" ]]; then
+if [[ $(id -u) -ne 0 ]]; then
 	echo "You must run this script using sudo."
 	exit 2
 fi
