@@ -45,7 +45,7 @@ spath='/var/lib/libvirt/images'
 # Array to store virtual machine names, to add more virtual machines to this copy the same format.  To change these names to reflect your system, keep the single quotes and change the content inbetween.
 #
 # format vms=(nameofmachine1 nameofmachine2 nameofmachine3 nameofmachine4) ect....
-vms=(deb1 deb2 deb3)
+vms=(ubu1 ubu2)
 
 # Variable for log text file for easy reference
 logfile=virtualsafety-log.txt
