@@ -37,7 +37,7 @@
 # For this to work properly the directories contained in the variable must exist.  If you're doing a restore on a fresh install of the host, create the directory contained in dpath and copy the files there before you begin the process.
 
 # destination path:
-dpath='/home/jmcarman/Backups'
+dpath='/home/jmcarman/backups'
 
 # source path:
 spath='/var/lib/libvirt/images'
@@ -65,16 +65,14 @@ function backup() {
 	# gzip images and store them in back up directory, run in the background
 	echo "Creating backup of $vm in $dpath"
 	touch $dpath/$vm.qcow2.backup.gz
-	$(gzip <$spath/$vm.qcow2 >$dpath/$vm.qcow2.backup.gz)&
-	progress
+	gzip <$spath/$vm.qcow2 >$dpath/$vm.qcow2.backup.gz & progress --monitor --pid=$!
 	logMsg="$logMsg $vm,"
 }
 
 function restore() {
 	cd $spath
 	echo "Restoring $vm"
-	$(gunzip <$dpath/$vm.qcow2.backup.gz >$spath/$vm.qcow2)&
-	progress
+	gunzip <$dpath/$vm.qcow2.backup.gz >$spath/$vm.qcow2 & progress --monitor --pid=$!
 	logMsg="$logMsg $vm,"
 	cp $spath/$vm.xml $dpath/$vm.xml
 	virsh define $vm.xml
@@ -104,15 +102,6 @@ function logfile () {
 	else # update the end date
 		sed -i "s/End\:.*/End\:\ $(date +'%d-%b-%Y')/" $dpath/$logfile
 	fi
-}
-
-function progress() {
-	# $! is most recent running process ID, check running processes to see if the backround gzip has completed.  While it's running, print a "#" on the screen every 3 seconds.	
-	while [[ $(ps | grep $!) != "" ]]; do 
-		echo -n '#'
-		sleep 3
-	done
-	echo "" # To keep messages and prompts aligned properly
 }
 
 function completion() {
